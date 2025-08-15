@@ -1,13 +1,17 @@
 # IAM Action Watcher
 
-If you write software that runs in the cloud, or deploy IaC of any kind, you know that it's notoriously
-difficult to know exactly what permissions are required to run your code.
+In the wonderful world of AWS IAM it can be notoriously difficult to know exactly what permissions are required to run your code. IaC tooling generally makes many different types of AWS API calls which invoke different security actions requiring different permissions which are not always obvious or predictable.
 
-This tool monitors in real-time all IAM actions performed by a user/principal during a time window.
+E.g: Invoking a few different high-level functions on a simple program/module will do different things:
+    - refresh makes 'list/describe/get' calls
+    - up/apply makes 'create' calls
+    - down/destroy makes 'destroy/delete/deregister/deprovison' calls
 
-It provides a looking glass to see the security actions performed by a program, we can then craft a permissions policy to deploy.
+I've found there is no good way to know exactly what these calls will be until all the functions have been tested and this usually means a lot of IAM back-forth debugging to raise or lower access permissions to a reasonable level.
 
-It's also useful as an auditing & security review tool.
+This simple tool monitors in real-time all security actions performed by a user/principal during a time window, which removes the guesswork and toil of testing every function to failure.
+
+It provides a looking glass to view actions performed by a program, which we then use to craft a permissions policy.
 
 ## Usage
 
