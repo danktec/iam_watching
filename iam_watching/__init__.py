@@ -41,15 +41,17 @@ def main():
             for event in response["Events"]:
                 if event["EventName"] != "LookupEvents":
 
-                    if event["EventName"] not in uniqueset:
-                        print(f"{event['EventSource'].split(".")[0]}:{event['EventName']}")
+                    action = f"{event['EventSource'].split(".")[0]}:{event['EventName']}"
+
+                    if action not in uniqueset:
+                        print(action)
                     
-                    uniqueset.add(event["EventName"])
+                    uniqueset.add(action)
 
             # Don't exceed the API call limit of 2 per second.
             time.sleep(SLEEP_SECONDS)
 
     except KeyboardInterrupt:
-        print(f"\nThe following IAM operations were recently performed by {USER}:\n")
-        print(f"{', '.join(uniqueset)}\n")
-        print("Use this list to construct an IAM policy for your project with minimum required privileges :)")
+        print(f"\nThe following IAM actions were recently performed by {USER}:\n")
+
+        print(f"\"Action\": {json.dumps(list(uniqueset), indent=2)}\n")
