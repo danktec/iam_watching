@@ -1,16 +1,18 @@
 [project]
 name = "iam_watching"
-version = "1.1.0"
+version = "1.2.0"
 description = "Realtime monitor for IAM activity for IaC projects"
 authors = [
     {name = "Dank", email = "4129589+danktec@users.noreply.github.com"}
 ]
 license = {text = "MIT"}
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.13,<4.0"
 dependencies = [
     "boto3 (>=1.40.8,<2.0.0)",
-    "datetime (>=5.5,<6.0)"
+    "datetime (>=5.5,<6.0)",
+    "flake8 (>=7.3.0,<8.0.0)",
+    "taskipy (>=1.14.1,<2.0.0)"
 ]
 
 [tool.poetry]
@@ -25,3 +27,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 iam_watching = "iam_watching.command_line:main"
+
+[tool.taskipy.tasks]
+lint = "echo 'running flake8... ' && poetry run flake8 ."

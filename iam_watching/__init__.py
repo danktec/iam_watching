@@ -2,29 +2,38 @@ import boto3
 import json
 import time
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 VERBOSE = False
 SLEEP_SECONDS = 5
-MAX_RESULTS = 15
+MAX_RESULTS = 50
 USER = ""
 
-def main():
 
-    client = boto3.client("cloudtrail")
+def main() -> None:
 
-    uniqueset = set()
+    client: boto3.client = boto3.client("cloudtrail")
 
-    print(f"\nWatching every {SLEEP_SECONDS}s for last {MAX_RESULTS} operations currently being performed by {USER} \n")
+    uniqueset: set = set()
 
-    print(f"New events can take up to 2 minutes to show up. Repeated actions are reported only once\n")
+    print(f"""
+        Querying every {SLEEP_SECONDS}s for last {MAX_RESULTS}
+        operations currently being performed by {USER}
+        Events can take up to 2 minutes to show up
+    """)
 
-    print("Hit Ctrl+C to stop watching security events\n")
+    print("""
+        Displaying unique actions only
+    """)
+
+    print("""
+        Hit Ctrl+C to stop watching security events
+    """)
 
     try:
         while True:
 
             # Filter for a single principal
-            response = client.lookup_events(
+            response: boto3.client.lookup_event = client.lookup_events(
                 LookupAttributes=[
                     {
                         "AttributeKey": "Username",
@@ -35,23 +44,32 @@ def main():
             )
 
             if VERBOSE:
-                print(json.dumps(response, indent=2, default=str))
+                print(
+                    json.dumps(response, indent=2, default=str)
+                )
 
             # Filter out lookups as this script spams them
             for event in response["Events"]:
                 if event["EventName"] != "LookupEvents":
 
-                    action = f"{event['EventSource'].split(".")[0]}:{event['EventName']}"
+                    event_source: str = event['EventSource'].split(".")[0]
+
+                    action: str = f"{event_source}:{event['EventName']}"
 
                     if action not in uniqueset:
-                        print(action)
-                    
+                        print(f"{event["EventTime"]} | {action}")
+
                     uniqueset.add(action)
 
             # Don't exceed the API call limit of 2 per second.
             time.sleep(SLEEP_SECONDS)
 
     except KeyboardInterrupt:
-        print(f"\nThe following IAM actions were recently performed by {USER}:\n")
+        print(f"""
+        The following actions were recently
+        performed by {USER}:
+        """)
 
-        print(f"\"Action\": {json.dumps(list(uniqueset), indent=2)}\n")
+        print(f"""
+\"Action\": {json.dumps(list(uniqueset), indent=2)}
+        """)
