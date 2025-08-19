@@ -1,9 +1,11 @@
 # IAM Action Watcher
 
-Monitors IAM activities (Actions) for a given user in realtime. Outputs a list of actions to help construct a policy document.
+Monitors IAM activities (Actions) for a given user or role in realtime. Outputs a list of actions to help construct a policy document.
+
+"A CLI helper tool which runs alongside your IaC project to determine exactly what permissions your policy will require"
 
 ```
-> poetry run python -m iam_watching -u testuser
+> poetry run iam_watching -u testuser
 
         Watching every 5s for last 50
         operations currently being performed by testuser
@@ -29,14 +31,14 @@ Monitors IAM activities (Actions) for a given user in realtime. Outputs a list o
 ```
 
 ## Why?
-With AWS IAM it can be hard to know exactly what permissions are required to run your code. IaC tooling generally makes many different types of AWS API calls which invoke different security actions requiring different permissions which are not always obvious or predictable due to variability in API styles & standards at AWS.
+With AWS IAM it can be hard to know exactly what permissions are required to run your code. IaC tooling makes many different API calls invoking actions requiring specific permissions.
 
-E.g: Invoking a few different high-level functions on a simple program/module will do different things:
+E.g: Running a few different high-level functions on a simple program/module will do different things:
 - refresh makes 'list/describe/get' calls
 - up/apply makes 'create' calls
 - down/destroy makes 'destroy/delete/deregister/de-provision' calls
 
-I've found there is no good way to know exactly what these calls will be until all the functions have been tested and this usually means a lot of back & forth debugging to raise or lower access permissions to a reasonable level.
+I've found there is no good way to know exactly what these calls will be until all the functions have been tested and this usually means a lot of back & forth debugging to raise or lower access permissions to a reasonable level. Best-practice for IaC is a policy carrying the exact/minimum security.
 
 This simple CLI tool monitors CloudTrail for all security actions performed by a user/principal during a time window, this removes the guesswork and toil of testing every function to failure.
 
@@ -44,7 +46,7 @@ This simple CLI tool monitors CloudTrail for all security actions performed by a
 
 ```bash
 poetry install
-poetry run python3 -m iam_watching --user [iam_username]
+poetry run iam_watching --user [iam_username]|[role_session_name]
 ```
 
 ## Publishing the Package

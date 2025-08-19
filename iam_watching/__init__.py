@@ -16,8 +16,8 @@ def main() -> None:
     uniqueset: set = set()
 
     print(f"""
-        Querying every {SLEEP_SECONDS}s for last {MAX_RESULTS}
-        operations currently being performed by {USER}
+        Querying every {SLEEP_SECONDS}s for last {MAX_RESULTS} operations
+        currently being performed by {USER}
         Events can take up to 2 minutes to show up
     """)
 
