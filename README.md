@@ -42,23 +42,16 @@ I've found there is no good way to know exactly what these calls will be until a
 
 This simple CLI tool monitors CloudTrail for all security actions performed by a user/principal during a time window, this removes the guesswork and toil of testing every function to failure.
 
-## Using It
+## Developing
 
 ```bash
 poetry install
 poetry run iam_watching --user [iam_username]|[role_session_name]
 ```
 
-## Publishing the Package
+## Install from PyPi
 
 ```bash
-# Build & install locally
-poetry build
-pipx install dist/iam_watching-1.1.0-py3-none-any.whl --force
-
-# Run locally
+pipx install iam_watching
 iam_watching --help
 ```
-
-## TODO
-- Publish to pypy

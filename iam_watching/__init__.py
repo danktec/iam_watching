@@ -2,7 +2,7 @@ import boto3
 import json
 import time
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 VERBOSE = False
 SLEEP_SECONDS = 5
 MAX_RESULTS = 50
