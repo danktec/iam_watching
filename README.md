@@ -5,7 +5,9 @@ Monitors IAM activities (Actions) for a given user or role in realtime. Outputs 
 "A CLI helper tool which runs alongside your IaC project to determine exactly what permissions your policy will require"
 
 ```
-> poetry run iam_watching -u testuser
+> poetry run iam_watching
+No user specified
+Using sts identity: arn:aws:sts::[account_id]:assumed-role/[role_name]/[session_tag]
 
         Watching every 5s for last 50
         operations currently being performed by testuser
@@ -42,11 +44,15 @@ I've found there is no good way to know exactly what these calls will be until a
 
 This simple CLI tool monitors CloudTrail for all security actions performed by a user/principal during a time window, this removes the guesswork and toil of testing every function to failure.
 
+By default the program will detect if you are authenticated as a traditional iam/user or a modern sts/session. But you can still over-ride which events you want to see with the `--user` flag.
+
 ## Developing
+
+Running it locally
 
 ```bash
 poetry install
-poetry run iam_watching --user [iam_username]|[role_session_name]
+poetry run iam_watching
 ```
 
 ## Install from PyPi

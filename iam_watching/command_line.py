@@ -33,8 +33,12 @@ def main(assigned_args: list = None) -> None:
         "--user",
         action="store",
         type=str,
-        required=True,
-        help="The IAM User or Role name to filter"
+        required=False,
+        default="",
+        help="""
+            The IAM User or Role name to filter events for
+            (defaults to the authenticated user/session)
+        """
     )
     parser.add_argument(
         "-m",

@@ -1,6 +1,6 @@
 [project]
 name = "iam_watching"
-version = "1.3.0"
+version = "1.4.0"
 description = "Realtime monitor for IAM activity for IaC projects"
 authors = [
     {name = "Dank", email = "4129589+danktec@users.noreply.github.com"}
