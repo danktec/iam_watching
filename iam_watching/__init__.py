@@ -2,13 +2,13 @@ import boto3
 import botocore
 import json
 import time
-import botocore.client
-from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ClientError
+import botocore.exceptions
+from datetime import datetime, timedelta, timezone
 
-__version__ = "1.4.0"
+__version__ = "1.5  .0"
 VERBOSE = False
 SLEEP_SECONDS = 5
-MAX_RESULTS = 50
+MAX_RESULTS = 100
 USER = ""
 
 
@@ -16,6 +16,9 @@ def main() -> None:
 
     global USER
     uniqueset: set = set()
+
+    now = datetime.now(timezone.utc)
+    now_formatted = now.strftime("%a, %d %b %Y %H:%M:%S GMT")
 
     try:
         sts: botocore.client.STS = boto3.client("sts")
@@ -25,28 +28,29 @@ def main() -> None:
         auth_type: dict = identity["Arn"].split(":")[2]
 
         if USER == "":
-            print("No user specified")
             if auth_type == "sts":
                 USER = identity["Arn"].split("/")[2]
-                print(f"Using sts identity: {identity["Arn"]}")
+                print(f"""
+        Using sts identity: {identity["Arn"]}""")
             if auth_type == "iam":
                 USER = identity["Arn"].split("/")[1]
-                print(f"Using iam identity: {identity["Arn"]}")
+                print(f"""
+        Using iam identity: {identity["Arn"]}""")
 
-    except NoCredentialsError:
+    except botocore.exceptions.NoCredentialsError:
         print("No AWS credentials found.")
-    except PartialCredentialsError:
+    except botocore.exceptions.PartialCredentialsError:
         print("Incomplete AWS credentials.")
-    except ClientError as e:
+    except botocore.exceptions.ClientError as e:
         print(f"Authentication failed: {e}")
 
     print(f"""
-        Querying every {SLEEP_SECONDS}s for last {MAX_RESULTS} operations
-        currently being performed by {USER}
+        Watching for security actions being performed by {USER}
         Events can take up to 2 minutes to show up""")
 
-    print("""
-        Displaying unique actions only""")
+    print(f"""
+        Displaying unique actions only from:
+        {now_formatted}""")
 
     print("""
         Hit Ctrl+C to stop watching security events
@@ -56,14 +60,16 @@ def main() -> None:
         while True:
 
             # Filter for a single principal
-            response: boto3.client.lookup_event = client.lookup_events(
+            response: boto3.client.lookup_events = client.lookup_events(
                 LookupAttributes=[
                     {
                         "AttributeKey": "Username",
                         "AttributeValue": f"{USER}"
                     }
                 ],
-                MaxResults=MAX_RESULTS
+                MaxResults=MAX_RESULTS,
+                StartTime=now_formatted,
+                EndTime=now + timedelta(days=1),
             )
 
             if VERBOSE:

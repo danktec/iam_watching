@@ -45,7 +45,7 @@ def main(assigned_args: list = None) -> None:
         "--maxresults",
         action="store",
         type=int,
-        default=50,
+        default=100,
         help="How far to look back on each query"
     )
 
