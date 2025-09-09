@@ -2,15 +2,18 @@ import boto3
 import botocore
 import json
 import time
+import re
+import os
 import botocore.exceptions
 from datetime import datetime, timedelta, timezone
 
-__version__ = "1.5  .0"
+__version__ = "1.6.0"
 VERBOSE = False
 SLEEP_SECONDS = 5
 MAX_RESULTS = 100
 USER = ""
-
+LOG_MODE = False
+DEV_MODE = True
 
 def main() -> None:
 
@@ -83,22 +86,64 @@ def main() -> None:
 
                     event_source: str = event['EventSource'].split(".")[0]
 
-                    action: str = f"{event_source}:{event['EventName']}"
+                    # Strip out API versions which lead to inconsistencies
+                    # e.g 'lambda:CreateFunction (event name: CreateFunction20150331)'
+                    event_name = re.split(r"(\d+)", event["EventName"])[0]
 
-                    if action not in uniqueset:
-                        print(f"{event["EventTime"]} | {action}")
+                    action: str = f"{event_source}:{event_name}"
+
+                    # In log mode we show the event and time seen by CW
+                    if LOG_MODE:
+                        if action not in uniqueset:
+                            print(f"{event["EventTime"]} | {action}")
 
                     uniqueset.add(action)
+
+            # In dev mode we continually refresh a policy json document
+            if DEV_MODE:
+                os.system('clear')
+                print(
+                    json.dumps(
+                    {
+                        "Version": "2012-10-17",
+                        "Statement": [
+                            {
+                                "Effect": "Allow",
+                                "Action": list(uniqueset),
+                                "Resource": "*"
+                            }
+                        ]
+                    },
+                    sort_keys=False,
+                    indent=4,
+                    separators=(',', ': ')
+                    )
+                )
 
             # Don't exceed the API call limit of 2 per second.
             time.sleep(SLEEP_SECONDS)
 
     except KeyboardInterrupt:
         print(f"""
-        The following actions were recently
-        performed by {USER}:
+        Policy document for actions seen by {USER}:
         """)
 
-        print(f"""
-\"Action\": {json.dumps(list(uniqueset), indent=2)}
-        """)
+        # Print an iam policy
+        print(
+            json.dumps(
+            {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Action": list(uniqueset),
+                        "Resource": "*"
+                    }
+                ]
+            },
+            sort_keys=False,
+            indent=4,
+            separators=(',', ': ')
+            )
+        )
+

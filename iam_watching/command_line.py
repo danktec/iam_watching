@@ -23,6 +23,13 @@ def main(assigned_args: list = None) -> None:
         version=iam_watching.__version__
     )
     parser.add_argument(
+        "-l",
+        "--log_mode",
+        action="store_true",
+        default=False,
+        help="Show events in the sequence as seen by CW"
+    )
+    parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
@@ -54,6 +61,8 @@ def main(assigned_args: list = None) -> None:
     iam_watching.USER = args.user
     iam_watching.VERBOSE = args.verbose
     iam_watching.MAX_RESULTS = args.maxresults
+    iam_watching.LOG_MODE = args.log_mode
+    iam_watching.DEV_MODE = not args.log_mode
 
     iam_watching.main()
 
