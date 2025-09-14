@@ -46,9 +46,12 @@ This simple CLI tool monitors CloudTrail for all security actions performed by a
 
 By default the program will detect if you are authenticated as a traditional iam/user or a modern sts/session. But you can still over-ride which events you want to see with the `--user` flag.
 
-## Developing
+## Running it
 
-Running it locally
+### Requires >= Python3.13
+Multiple Python environments can be managed with `pyenv`
+
+Running it locally for dev
 
 ```bash
 git clone git@github.com:danktec/iam_watching.git
@@ -57,6 +60,7 @@ poetry run iam_watching
 ```
 
 ## Install in a venv
+
 ```bash
 python3 -m venv .
 source bin/activate
