@@ -51,11 +51,20 @@ By default the program will detect if you are authenticated as a traditional iam
 Running it locally
 
 ```bash
+git clone git@github.com:danktec/iam_watching.git
 poetry install
 poetry run iam_watching
 ```
 
-## Install from PyPi
+## Install in a venv
+```bash
+python3 -m venv .
+source bin/activate
+pip install iam-watching
+iam_watching
+```
+
+## Install globally with pipx
 
 ```bash
 pipx install iam_watching
