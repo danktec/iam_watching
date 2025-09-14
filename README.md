@@ -49,7 +49,18 @@ By default the program will detect if you are authenticated as a traditional iam
 ## Running it
 
 ### Requires >= Python3.13
-Multiple Python environments can be managed with `pyenv`
+Multiple Python environments can be managed with `pyenv` or try running in Docker
+
+## Running in Docker
+Builds `FROM python:3.13.7-slim-trixie`
+
+```bash
+git clone git@github.com:danktec/iam_watching.git
+cd iam_watching
+docker build -t iam_watching .
+# Mount your AWS credentials into the container for Boto
+docker run -it -v ~/.aws/:/root/.aws/ iam_watching
+```
 
 Running it locally for dev
 
